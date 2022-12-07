@@ -5,41 +5,44 @@ namespace SnakeGameplay
     static class ScenePrinter
     {
         // Print the frame according to the game field state.
-        public static bool Print(in int sizeX, in int sizeY, Unit[,] gameField)
+        public static void Print(Scene scene)
         {
-            bool isHasFruit = false;
-            for (int i = 0; i < sizeX; ++i)
+            for (int i = 0; i < scene.SizeX; ++i)
             {
-                for (int j = 0; j < sizeY; ++j)
+                for (int j = 0; j < scene.SizeY; ++j)
                 {
-                    switch (gameField.GetValue(i, j))
+                    if(scene.GameField[i, j] == Unit.FreeSpace)
                     {
-                        case Unit.FreeSpace:
-                            Console.Write("  ");
-                            break;
-                        case Unit.Border:
-                            Console.Write("#");
-                            if (i == 0 || i == sizeX - 1 || j == 0)
-                            {
-                                Console.Write(" ");
-                            }
-                            break;
-                        case Unit.Head:
-                            Console.Write("o ");
-                            break;
-                        case Unit.Body:
-                            Console.Write("x ");
-                            break;
-                        case Unit.Fruit:
-                            Console.Write("F ");
-                            isHasFruit = true;
-                            break;
+                        Console.Write("  ");
+                        continue;
                     }
-
+                    if(scene.GameField[i, j] == Unit.Border)
+                    {
+                        Console.Write("#");
+                        if (i == 0 || i == scene.SizeX - 1 || j == 0)
+                        {
+                            Console.Write(" ");
+                        }
+                        continue;
+                    }
+                    if(scene.GameField[i, j] == Unit.Head)
+                    {
+                        Console.Write("o ");
+                        continue;
+                    }
+                    if(scene.GameField[i, j] == Unit.Body)
+                    {
+                        Console.Write("x ");
+                        continue;
+                    }
+                    if (scene.GameField[i, j] == Unit.Fruit)
+                    {
+                        Console.Write("F ");
+                        continue;
+                    }
                 }
                 Console.WriteLine();
             }
-            return isHasFruit;
         }
 
         public static void PrintMovementDirection(Direction? direction, int sizeX)
