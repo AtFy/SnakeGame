@@ -36,7 +36,7 @@ namespace SnakeGameplay
                     int lastY = Y;
                     X -= 1;
 
-                    if (CheckIfCanMove(gameField, direction))
+                    if (CheckIfCanMove(gameField, direction, bodies))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
                         CheckIfFruitConsumed(gameField, bodies);
@@ -58,7 +58,7 @@ namespace SnakeGameplay
                     lastY = Y;
                     X += 1;
 
-                    if (CheckIfCanMove(gameField, direction))
+                    if (CheckIfCanMove(gameField, direction, bodies))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
                         CheckIfFruitConsumed(gameField, bodies);
@@ -80,7 +80,7 @@ namespace SnakeGameplay
                     lastY = Y;
                     Y -= 1;
 
-                    if (CheckIfCanMove(gameField, direction))
+                    if (CheckIfCanMove(gameField, direction, bodies))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
                         CheckIfFruitConsumed(gameField, bodies);
@@ -102,7 +102,7 @@ namespace SnakeGameplay
                     lastY = Y;
                     Y += 1;
                     
-                    if (CheckIfCanMove(gameField, direction))
+                    if (CheckIfCanMove(gameField, direction, bodies))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
                         CheckIfFruitConsumed(gameField, bodies);
@@ -122,8 +122,14 @@ namespace SnakeGameplay
             }
         }
 
-        private bool CheckIfCanMove(Unit[,] gameField, Direction direction)
+        private bool CheckIfCanMove(Unit[,] gameField, Direction direction, List<Body> bodies)
         {
+            // TODO: Fix this UI bug.
+            if(X == bodies[bodies.Count - 1].X && Y == bodies[bodies.Count - 1].Y)
+            {
+                return true;
+            }
+
             if (direction == Direction.Down || direction == Direction.Right)
             {
                 // Magic +1 appeared due to IsBorder() logic.
