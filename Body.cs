@@ -5,11 +5,10 @@ namespace SnakeGameplay
     {
         public Body(in int fieldSizeX, in int fieldSizeY, Unit[,] gameField, in int segmentSequenceNumber)
         {
-            X = ( (fieldSizeX) / 2 ) + segmentSequenceNumber;
-            Y = ( (fieldSizeY) / 2 );
+            X = ((fieldSizeX) / 2) + segmentSequenceNumber;
+            Y = ((fieldSizeY) / 2);
             Create(gameField);
         }
-
         public Body(int x, int y, Unit[,] gameField)
         {
             X = x;
@@ -18,10 +17,6 @@ namespace SnakeGameplay
         }
         public int X { get; set; }
         public int Y { get; set; }
-        private void Create(Unit[,] gameField)
-        {
-            gameField[X, Y] = Unit.Body; 
-        }
         public void Move(Unit[,] gameField, ref int headX, ref int headY)
         {
             int tempX = X;
@@ -39,7 +34,9 @@ namespace SnakeGameplay
         {
             gameField[X, Y] = Unit.FreeSpace;
         }
-        
-
+        private void Create(Unit[,] gameField)
+        {
+            gameField[X, Y] = Unit.Body;
+        }
     }
 }

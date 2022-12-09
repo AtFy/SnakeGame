@@ -11,12 +11,12 @@ namespace SnakeGameplay
             {
                 for (int j = 0; j < scene.SizeY; ++j)
                 {
-                    if(scene.GetSectorElement(i, j) == Unit.FreeSpace)
+                    if(scene.GetThisSectorElement(i, j) == Unit.FreeSpace)
                     {
                         Console.Write("  ");
                         continue;
                     }
-                    if(scene.GetSectorElement(i, j) == Unit.Border)
+                    if(scene.GetThisSectorElement(i, j) == Unit.Border)
                     {
                         Console.Write("#");
                         if (i == 0 || i == scene.SizeX - 1 || j == 0)
@@ -25,17 +25,17 @@ namespace SnakeGameplay
                         }
                         continue;
                     }
-                    if(scene.GetSectorElement(i, j) == Unit.Head)
+                    if(scene.GetThisSectorElement(i, j) == Unit.Head)
                     {
                         Console.Write("o ");
                         continue;
                     }
-                    if(scene.GetSectorElement(i, j) == Unit.Body)
+                    if(scene.GetThisSectorElement(i, j) == Unit.Body)
                     {
                         Console.Write("x ");
                         continue;
                     }
-                    if (scene.GetSectorElement(i, j) == Unit.Fruit)
+                    if (scene.GetThisSectorElement(i, j) == Unit.Fruit)
                     {
                         Console.Write("F ");
                         continue;

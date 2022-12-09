@@ -17,6 +17,60 @@ namespace SnakeGameplay
     {
         private static ConsoleKey _key;
 
+        // Converting key into specific direction.
+        public static Direction GetDirection()
+        {
+
+            GetKeyFromListenerAsync();
+            Thread.Wait(1000);
+
+            if(_key == ConsoleKey.A)
+            {
+                return Direction.Left;
+            }
+            if (_key == ConsoleKey.D)
+            {
+                return Direction.Right;
+            }
+            if (_key == ConsoleKey.S)
+            {
+                return Direction.Down;
+            }
+            return Direction.Up;
+        }
+        public static bool CheckIfOppositeDirection(Direction newDirection, Direction lastDirection)
+        {
+            if(newDirection == Direction.Up)
+            {
+                if (lastDirection == Direction.Down)
+                {
+                    return true;
+                }
+                return false;
+            }
+            if (newDirection == Direction.Down)
+            {
+                if (lastDirection == Direction.Up)
+                {
+                    return true;
+                }
+                return false;
+            }
+            if (newDirection == Direction.Left)
+            {
+                if (lastDirection == Direction.Right)
+                {
+                    return true;
+                }
+                return false;
+            }
+                if (lastDirection == Direction.Left)
+                {
+                    return true;
+                }
+                return false;
+        }
+
         // Input key listener async task.
         private static async Task<ConsoleKey> ListenKeyAsync()
         { 
@@ -37,70 +91,6 @@ namespace SnakeGameplay
         {
            _key = await ListenKeyAsync();
         }
-
-        // Converting key into specific direction.
-        public static Direction? GetDirection()
-        {
-
-            GetKeyFromListenerAsync();
-            Thread.Wait(1000);
-
-            switch (_key)
-            {
-                case ConsoleKey.A:
-                    return Direction.Left;
-
-                case ConsoleKey.D:
-                    return Direction.Right;
-
-                case ConsoleKey.S:
-                    return Direction.Down;
-
-                case ConsoleKey.W:
-                    return Direction.Up;
-
-                case ConsoleKey.Enter:
-                    return Direction.Enter;
-
-                default:
-                    return null;
-            }
-        }
-        public static bool IsOppositeDirection(Direction? newDirection,Direction? lastDirection)
-        {
-            switch (newDirection)
-            {
-                case Direction.Up:
-                    if(lastDirection == Direction.Down)
-                    {
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Down:
-                    if(lastDirection == Direction.Up)
-                    {
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Left:
-                    if (lastDirection == Direction.Right)
-                    {
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Right:
-                    if (lastDirection == Direction.Left)
-                    {
-                        return true;
-                    }
-                    return false;
-
-                default:
-                    return false;
-            }
-        }
+       
     }
 }

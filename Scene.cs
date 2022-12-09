@@ -52,7 +52,7 @@ namespace SnakeGameplay
 
         private Unit[,] _gameField;
 
-        private Direction? _lastDirection = Direction.Up;
+        private Direction _lastDirection = Direction.Up;
 
         private Head _head;
         private List<Body> _bodies;
@@ -65,18 +65,16 @@ namespace SnakeGameplay
             ScenePrinter.PrintMovementDirection(_lastDirection, SizeX * 2);
             Console.SetCursorPosition(0, SizeY + 1);
 
-            if (!CheckIfFruit())
+            if (!CheckIfFruitExist())
             {
                 CreateFruit();
             }
 
             var newDirection = Input.GetDirection();
-            if (!Input.IsOppositeDirection(newDirection, _lastDirection))
+            if (!Input.CheckIfOppositeDirection(newDirection, _lastDirection))
             {
-                if (newDirection != null)
-                {
-                    _lastDirection = newDirection;
-                }
+
+                _lastDirection = newDirection;
             }
 
             // Move() returns false, if you collided the border, which causes defeat.
@@ -84,11 +82,10 @@ namespace SnakeGameplay
             {
                 return false;
             }
-
             return true;
         }
 
-        public Unit GetSectorElement(int x, int y)
+        public Unit GetThisSectorElement(int x, int y)
         {
             return _gameField[x, y];
         }
@@ -108,7 +105,7 @@ namespace SnakeGameplay
             _gameField[rnd.Next(1, SizeX - 1), rnd.Next(1, SizeY - 1)] = Unit.Fruit;
         }
 
-        private bool CheckIfFruit()
+        private bool CheckIfFruitExist()
         {
             for (int i = 0; i < SizeX; ++i)
             {

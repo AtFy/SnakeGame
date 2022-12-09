@@ -15,8 +15,8 @@ namespace SnakeGameplay
         public int X { get; set; }
         public int Y { get; set; }
 
-        public double LastTailTile { get; set; }
-        public void Create(Unit[,] gameField)
+        private double LastTailTile { get; set; }
+        private void Create(Unit[,] gameField)
         {
             gameField[X, Y] = Unit.Head;
         }
@@ -25,7 +25,7 @@ namespace SnakeGameplay
 
         // Move() just moves the snake's head across the field. Replaces previous head location with a Unit.FreeSpace.
         // Move() returns false, if you collided the border or your tail, which causes defeat.
-        public bool Move(Unit[,] gameField, Direction? direction, List<Body> bodies)
+        public bool Move(Unit[,] gameField, Direction direction, List<Body> bodies)
         {
             switch (direction)
             {
@@ -39,7 +39,7 @@ namespace SnakeGameplay
                     if (CheckIfCanMove(gameField, direction))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruit(gameField, bodies);
+                        CheckIfFruitConsumed(gameField, bodies);
                         gameField[X, Y] = Unit.Head;
 
                         for (int i = 0; i < bodies.Count; ++i)
@@ -61,7 +61,7 @@ namespace SnakeGameplay
                     if (CheckIfCanMove(gameField, direction))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruit(gameField, bodies);
+                        CheckIfFruitConsumed(gameField, bodies);
                         gameField[X, Y] = Unit.Head;
 
                         for (int i = 0; i < bodies.Count; ++i)
@@ -83,7 +83,7 @@ namespace SnakeGameplay
                     if (CheckIfCanMove(gameField, direction))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruit(gameField, bodies);
+                        CheckIfFruitConsumed(gameField, bodies);
                         gameField[X, Y] = Unit.Head;
 
                         for (int i = 0; i < bodies.Count; ++i)
@@ -105,7 +105,7 @@ namespace SnakeGameplay
                     if (CheckIfCanMove(gameField, direction))
                     {
                         LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruit(gameField, bodies);
+                        CheckIfFruitConsumed(gameField, bodies);
                         gameField[X, Y] = Unit.Head;
 
                         for (int i = 0; i < bodies.Count; ++i)
@@ -122,7 +122,7 @@ namespace SnakeGameplay
             }
         }
 
-        private bool CheckIfCanMove(Unit[,] gameField, Direction? direction)
+        private bool CheckIfCanMove(Unit[,] gameField, Direction direction)
         {
             if (direction == Direction.Down || direction == Direction.Right)
             {
@@ -141,7 +141,7 @@ namespace SnakeGameplay
             return false;
 
         }
-        private void CheckIfFruit(Unit[,] gameField, List<Body> bodies)
+        private void CheckIfFruitConsumed(Unit[,] gameField, List<Body> bodies)
         {
             if(gameField[X,Y] == Unit.Fruit) // здесь добавить логику, сравнение координат последнего сегмента с предпоследним
             {
