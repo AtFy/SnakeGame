@@ -1,130 +1,93 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
+
 
 namespace SnakeGameplay
 {
     class Head
     {
-        public Head(in int fieldSizeX, in int fieldSizeY, Unit[,] gameField)
+        public Head(Scene scene)
         {
-            X = (fieldSizeX) / 2;
-            Y = (fieldSizeY) / 2;
-            Create(gameField);
+            IsAlive = true;
+            X = (scene.SizeX) / 2;
+            Y = (scene.SizeY) / 2;
+            Create(scene);
 
         }
+
         public int X { get; set; }
         public int Y { get; set; }
+        public bool IsAlive { set; get; }
 
         private double LastTailTile { get; set; }
-        private void Create(Unit[,] gameField)
+        private void Create(Scene scene)
         {
-            gameField[X, Y] = Unit.Head;
+            scene.SetElement(X, Y, Unit.Head);
         }
-
-        
 
         // Move() just moves the snake's head across the field. Replaces previous head location with a Unit.FreeSpace.
         // Move() returns false, if you collided the border or your tail, which causes defeat.
-        public bool Move(Unit[,] gameField, Direction direction, List<Body> bodies)
+        public void Move(Scene scene)
         {
-            switch (direction)
+            if (scene.GetCurrentDirection() == Direction.Up)
             {
-                case Direction.Up:
-                    gameField[X, Y] = Unit.FreeSpace;
+                DeleteCurrentHead(scene, out int lastX, out int lastY);
+                X -= 1;
+                MoveHeadTail(scene, lastX, lastY);
+            }
 
-                    int lastX = X;
-                    int lastY = Y;
-                    X -= 1;
+            if (scene.GetCurrentDirection() == Direction.Down)
+            {
+                DeleteCurrentHead(scene, out int lastX, out int lastY);
+                X += 1;
+                MoveHeadTail(scene, lastX, lastY);
+            }
 
-                    if (CheckIfCanMove(gameField, direction, bodies))
-                    {
-                        LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruitConsumed(gameField, bodies);
-                        gameField[X, Y] = Unit.Head;
+            if (scene.GetCurrentDirection() == Direction.Left)
+            {
+                DeleteCurrentHead(scene, out int lastX, out int lastY);
+                Y -= 1;
+                MoveHeadTail(scene, lastX, lastY);
+            }
 
-                        for (int i = 0; i < bodies.Count; ++i)
-                        {
-                            bodies[i].Delete(gameField);
-                            bodies[i].Move(gameField, ref lastX, ref lastY);
-                        }
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Down:
-                    gameField[X, Y] = Unit.FreeSpace;
-
-                    lastX = X;
-                    lastY = Y;
-                    X += 1;
-
-                    if (CheckIfCanMove(gameField, direction, bodies))
-                    {
-                        LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruitConsumed(gameField, bodies);
-                        gameField[X, Y] = Unit.Head;
-
-                        for (int i = 0; i < bodies.Count; ++i)
-                        {
-                            bodies[i].Delete(gameField);
-                            bodies[i].Move(gameField, ref lastX, ref lastY);
-                        }
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Left:
-                    gameField[X, Y] = Unit.FreeSpace;
-
-                    lastX = X;
-                    lastY = Y;
-                    Y -= 1;
-
-                    if (CheckIfCanMove(gameField, direction, bodies))
-                    {
-                        LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruitConsumed(gameField, bodies);
-                        gameField[X, Y] = Unit.Head;
-
-                        for (int i = 0; i < bodies.Count; ++i)
-                        {
-                            bodies[i].Delete(gameField);
-                            bodies[i].Move(gameField, ref lastX, ref lastY);
-                        }
-                        return true;
-                    }
-                    return false;
-
-                case Direction.Right:
-                    gameField[X, Y] = Unit.FreeSpace;
-
-                    lastX = X;
-                    lastY = Y;
-                    Y += 1;
-                    
-                    if (CheckIfCanMove(gameField, direction, bodies))
-                    {
-                        LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
-                        CheckIfFruitConsumed(gameField, bodies);
-                        gameField[X, Y] = Unit.Head;
-
-                        for (int i = 0; i < bodies.Count; ++i)
-                        {
-                            bodies[i].Delete(gameField);
-                            bodies[i].Move(gameField, ref lastX, ref lastY);
-                        }
-                        return true;
-                    }
-                    return false;
-                
-                default:
-                    return true;
+            if (scene.GetCurrentDirection() == Direction.Right)
+            {
+                DeleteCurrentHead(scene, out int lastX, out int lastY);
+                Y += 1;
+                MoveHeadTail(scene, lastX, lastY);
             }
         }
 
-        private bool CheckIfCanMove(Unit[,] gameField, Direction direction, List<Body> bodies)
+        private void MoveHeadTail(Scene scene, int lastX, int lastY)
         {
-            // TODO: Fix this UI bug.
+            List<Body> bodies = scene.GetBodies();
+
+            if (!CheckIfCanMove(scene))
+            {
+                IsAlive = false;
+            }
+            LastTailTile = bodies[bodies.Count - 1].X + (bodies[bodies.Count - 1].Y * 0.1);
+            CheckIfFruitConsumed(scene);
+
+            for (int i = 0; i < bodies.Count; ++i)
+            {
+                bodies[i].Delete(scene);
+                bodies[i].Move(scene, ref lastX, ref lastY);
+            }
+            scene.SetElement(X, Y, Unit.Head);
+        }
+        private void DeleteCurrentHead(Scene scene, out int lastX, out int lastY)
+        {
+            scene.SetElement(X, Y, Unit.FreeSpace);
+
+            lastX = X;
+            lastY = Y;
+        }
+        private bool CheckIfCanMove(Scene scene)
+        {
+            List<Body> bodies = scene.GetBodies();
+            Direction direction = scene.GetCurrentDirection();
+
             if(X == bodies[bodies.Count - 1].X && Y == bodies[bodies.Count - 1].Y)
             {
                 return true;
@@ -132,26 +95,26 @@ namespace SnakeGameplay
 
             if (direction == Direction.Down || direction == Direction.Right)
             {
-                // Magic +1 appeared due to IsBorder() logic.
-                if (!Scene.CheckIfBorder(X, Y, gameField.GetUpperBound(0) + 1, gameField.GetUpperBound(1) + 1) && gameField[X, Y] != Unit.Body)
+                if (!Scene.CheckIfBorder(X, Y, scene.SizeX, scene.SizeY) && scene.GetThisSectorElement(X, Y) != Unit.Body)
                 {
                     return true;
                 }
                 return false;
             }
 
-            if (!Scene.CheckIfBorder(X, Y, gameField.GetUpperBound(0), gameField.GetUpperBound(1)) && gameField[X, Y] != Unit.Body)
+            if (!Scene.CheckIfBorder(X, Y, scene.SizeX, scene.SizeY) && scene.GetThisSectorElement(X, Y) != Unit.Body)
             {
                 return true;
             }
             return false;
 
         }
-        private void CheckIfFruitConsumed(Unit[,] gameField, List<Body> bodies)
+        private void CheckIfFruitConsumed(Scene scene)
         {
-            if(gameField[X,Y] == Unit.Fruit) // здесь добавить логику, сравнение координат последнего сегмента с предпоследним
+            if(scene.GetThisSectorElement(X, Y) == Unit.Fruit)
             {
-                bodies.Add(new Body(Convert.ToInt32(LastTailTile), Convert.ToInt32((LastTailTile * 10d) % 10), gameField));
+                List<Body> bodies = scene.GetBodies();
+                bodies.Add(new Body(scene, Convert.ToInt32(LastTailTile), Convert.ToInt32((LastTailTile * 10d) % 10)));
             }
         }
     }

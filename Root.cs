@@ -21,11 +21,11 @@ namespace SnakeGameplay
             Menu.Show();
             var scene = new Scene(sizeX, sizeY);
 
-            // scene.Update() returns false if the snake collided the border its tail which causes defeat.
-            while (scene.Update())
+            while (scene.CheckIfSnakeAlive())
             {
-                
+                scene.Update();
             }
+
             Menu.ShowGameOver();
         }
     }

@@ -44,9 +44,11 @@ namespace SnakeGameplay
                 Console.WriteLine();
             }
         }
-
-        public static void PrintMovementDirection(Direction? direction, int sizeX)
+        public static void PrintMovementDirection(Scene scene)
         {
+            int sizeX = scene.SizeX * 2;
+            Direction direction = scene.GetCurrentDirection();
+
             if (direction == Direction.Up) {
                 for (int i = 5; i < 10; ++i)
                 {

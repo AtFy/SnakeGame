@@ -3,40 +3,42 @@ namespace SnakeGameplay
 {
     class Body
     {
-        public Body(in int fieldSizeX, in int fieldSizeY, Unit[,] gameField, in int segmentSequenceNumber)
+        public Body(Scene scene, in int segmentSequenceNumber)
         {
-            X = ((fieldSizeX) / 2) + segmentSequenceNumber;
-            Y = ((fieldSizeY) / 2);
-            Create(gameField);
+            X = ((scene.SizeX) / 2) + segmentSequenceNumber;
+            Y = ((scene.SizeY) / 2);
+            Create(scene);
         }
-        public Body(int x, int y, Unit[,] gameField)
+        public Body(Scene scene, int x, int y)
         {
             X = x;
             Y = y;
-            Create(gameField);
+            Create(scene);
         }
+
         public int X { get; set; }
         public int Y { get; set; }
-        public void Move(Unit[,] gameField, ref int headX, ref int headY)
+
+        public void Move(Scene scene, ref int headX, ref int headY)
         {
             int tempX = X;
             int tempY = Y;
 
             X = headX;
             Y = headY;
-            Create(gameField);
+            Create(scene);
 
             headX = tempX;
             headY = tempY;
         }
-
-        public void Delete(Unit[,] gameField)
+        public void Delete(Scene scene)
         {
-            gameField[X, Y] = Unit.FreeSpace;
+            scene.SetElement(X, Y, Unit.FreeSpace);
         }
-        private void Create(Unit[,] gameField)
+
+        private void Create(Scene scene)
         {
-            gameField[X, Y] = Unit.Body;
+            scene.SetElement(X, Y, Unit.Body);
         }
     }
 }

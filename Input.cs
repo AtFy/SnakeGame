@@ -20,7 +20,6 @@ namespace SnakeGameplay
         // Converting key into specific direction.
         public static Direction GetDirection()
         {
-
             GetKeyFromListenerAsync();
             Thread.Wait(1000);
 
@@ -38,8 +37,10 @@ namespace SnakeGameplay
             }
             return Direction.Up;
         }
-        public static bool CheckIfOppositeDirection(Direction newDirection, Direction lastDirection)
+        public static bool CheckIfOppositeDirection(Scene scene, Direction newDirection)
         {
+            Direction lastDirection = scene.GetCurrentDirection();
+
             if(newDirection == Direction.Up)
             {
                 if (lastDirection == Direction.Down)
@@ -85,7 +86,6 @@ namespace SnakeGameplay
                 throw ex;
             }
         }
-
         // Asking a key from the listener when needed.
         private static async void GetKeyFromListenerAsync()
         {

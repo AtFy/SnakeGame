@@ -36,12 +36,12 @@ namespace SnakeGameplay
                 }
             }
 
-            _head = new Head(sizeX, sizeY, _gameField);
+            _head = new Head(this);
 
             _bodies = new List<Body>();
             for (int i = 1; i < 4; ++i)
             {
-                _bodies.Add(new Body(sizeX, sizeY, _gameField, segmentSequenceNumber: i));
+                _bodies.Add(new Body(this, segmentSequenceNumber: i));
             }
 
             CreateFruit();
@@ -51,18 +51,16 @@ namespace SnakeGameplay
         public int SizeY { get; }
 
         private Unit[,] _gameField;
-
         private Direction _lastDirection = Direction.Up;
-
         private Head _head;
         private List<Body> _bodies;
 
         // Frame update.
-        public bool Update()
+        public void Update()
         {
             Console.Clear();
             ScenePrinter.Print(this);
-            ScenePrinter.PrintMovementDirection(_lastDirection, SizeX * 2);
+            ScenePrinter.PrintMovementDirection(this);
             Console.SetCursorPosition(0, SizeY + 1);
 
             if (!CheckIfFruitExist())
@@ -71,25 +69,26 @@ namespace SnakeGameplay
             }
 
             var newDirection = Input.GetDirection();
-            if (!Input.CheckIfOppositeDirection(newDirection, _lastDirection))
+            if (!Input.CheckIfOppositeDirection(this, newDirection))
             {
 
                 _lastDirection = newDirection;
             }
 
-            // Move() returns false, if you collided the border, which causes defeat.
-            if (!_head.Move(_gameField, _lastDirection, _bodies))
-            {
-                return false;
-            }
-            return true;
+            _head.Move(this);
         }
-
+        public bool CheckIfSnakeAlive()
+        {
+            return _head.IsAlive;
+        }
         public Unit GetThisSectorElement(int x, int y)
         {
             return _gameField[x, y];
         }
-        
+        public void SetElement(int x, int y, Unit unit)
+        {
+            _gameField[x, y] = unit;
+        }
         public static bool CheckIfBorder(in int x, in int y, in int sizeX, in int sizeY)
         {
             if(x == 0 || y == 0 || x == sizeX - 1 || y == sizeY - 1)
@@ -98,13 +97,32 @@ namespace SnakeGameplay
             }
             return false;
         }
+        public Direction GetCurrentDirection()
+        {
+            return _lastDirection;
+        }
+        public List<Body> GetBodies()
+        {
+            return _bodies;
+        }
 
         private void CreateFruit()
         {
             Random rnd = new Random();
-            _gameField[rnd.Next(1, SizeX - 1), rnd.Next(1, SizeY - 1)] = Unit.Fruit;
-        }
+            int fruitX, fruitY;
 
+            while (true)
+            {
+                fruitX = rnd.Next(1, SizeX - 1);
+                fruitY = rnd.Next(1, SizeY - 1);
+                if (GetThisSectorElement(fruitX, fruitY) != Unit.Body &&
+                GetThisSectorElement(fruitX, fruitY) != Unit.Head)
+                {
+                    SetElement(fruitX, fruitY, Unit.Fruit);
+                    return;
+                }
+            }
+        }
         private bool CheckIfFruitExist()
         {
             for (int i = 0; i < SizeX; ++i)
