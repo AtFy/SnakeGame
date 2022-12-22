@@ -25,8 +25,6 @@ namespace SnakeGameplay
             scene.SetElement(X, Y, Unit.Head);
         }
 
-        // Move() just moves the snake's head across the field. Replaces previous head location with a Unit.FreeSpace.
-        // Move() returns false, if you collided the border or your tail, which causes defeat.
         public void Move(Scene scene)
         {
             if (scene.GetCurrentDirection() == Direction.Up)
